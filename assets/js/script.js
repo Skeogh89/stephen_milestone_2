@@ -17,10 +17,10 @@ var stephen = function () {
         var postion = positions.off;
 
         var returnObject = {
-            getState: function() {
+            getPosition: function() {
                 return postion;
         },
-        setState: function (i) {
+        setPosition: function (i) {
             console.log ('position' + i);
             if (i >= 0 && i <= postions.win) {
                 postion = i;
@@ -35,4 +35,61 @@ var stephen = function () {
         return returnObject;
 
         })();
+
+        var gp = gamePosition;
+        var level = 0;
+        var sequenceArr = [];
+        var selection = 0;  /* I untion into setState*/
+        var FINALROUND = 30;
+
+        function nextLevel() {
+            selection = 0;
+            
+            if (level +1 > FINALROUND){
+                gp.setPosition(gp.win);
+                }
+            else {
+                level += 1;
+                sequenceArr.push(Math.floor(Math.random() * 3.98));
+                gp.setPosition(gp.sequence);
+            }
+        }
+
+        function select(button) {
+            var k = gp.getPosition();
+
+            if(!(k == gp.on || k == gp.playerSelection)) {
+                return false;
+            }
+
+            if (k != gp.playerSelection)
+            return true;
+
+            selection += 1;
+
+            if (button != sequenceArr[selection -1]) {
+                selection = 0;
+                gp.setPosition(gs.incorrect);
+            } else if (selection == sequenceArr.length) {
+                gp.setPosition(gp.correct);
+            }
+
+            return true;
+        }
+
+        //Reset game
+
+        function restart () {
+            sequenceArr = [];
+            level = 0;
+            selection = 0;
+        }
+
+        function begin (){
+            restart();
+            nextLevel();
+        }
+       
+
+
     }
