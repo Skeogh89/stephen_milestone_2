@@ -197,10 +197,10 @@ var stephen = function () {
                 sg.setPosition(nextPosition);
             }
         }, ms);
-        }
+        });
 
-        function lightSequence (seq, lightMS, timeoutMS, a) {
-            a = (typeof a == 'undefined') ? 0 : a ;
+        function lightSequence(seq, lightMS, timeoutMS, a) {
+            a = (typeof a == 'undefined') ? 0 : a;
 
             if ( a < seq.length -1) {
                 lightColor(seq[a], lighMS);
@@ -234,9 +234,8 @@ var stephen = function () {
                         lightColor(a, 1000, {
                             
                             timeout(function () {
-                            sg.setState(sg.states.comDemo);
-                            doComDemo();
-                            }
+                            sg.setState(sg.positions.comSequence);
+                            comSequence();   
                         },1500);
                         break;
                     default:
@@ -244,18 +243,62 @@ var stephen = function () {
                         break;
                 }
             };
-                    
-                    })
+
+            /* Restart user interface */
+
+            function restart() {
+                clearTimeouts();
+                SETTINGS.comTimeoutMS = SETTINGS.startComTimeoutMS;
+                ctrl.buttons.map(function(btn){
+                    btn.lit = false;
+                });
+            }
+
+            this.start = function() {
+                if(ctrl.toggleSwitch()){
+                    restart();
+                    sg.start();
+                    comSequence();
                 }
+            };
+
+            function timeout(func, ms) {
+                timeoutStack.push($timeout(func, ms));
             }
+
+            this.toggleSwitch = function () {
+                sg.toggleSwitch();
+                restart();
+            };
+
+            function win(second) {
+            var buttons = ctrl.buttons;
+
+            buttons[1].light();
+
+            timeout(function () {
+                buttons[2].light();
+            }, 100);
+
+            timeout(function () {
+                buttons[3].light();
+            }, 225);
+
+            timeout(function () {
+                buttons[0].light();
+            }, 450);
+
+            timeout(function () {
+                buttons.map(function (btn) {
+                    btn.lit = false;
                 })
-            }
+            }, 1000);
 
+            if (!second)
+                timeout(function () { win(true); }, 2000);
+            else
+                timeout(ctrl.start, 2000);
         }
-        
-        
-        
-        );
-    
-
- })
+    });
+})();
+                    
